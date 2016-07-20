@@ -57,14 +57,32 @@ server.use(jwt({ secret: config.jwt.secret }).unless({
 /**
  * Initialize MySQL Connection
  */
-global.db = mysql.createConnection({
-    host     : config.db.host,
-    user     : config.db.username,
-    password : config.db.password,
-    database : config.db.name,
-    timezone: 'UTC'
-});
-db.connect();
+function handleDisconnect() {
+    global.db = mysql.createConnection({
+        host     : config.db.host,
+        user     : config.db.username,
+        password : config.db.password,
+        database : config.db.name,
+        timezone: 'UTC'
+    });
+
+    global.db.connect(function(err) {              // The server is either down
+      if(err) {                                     // or restarting (takes a while sometimes).
+        console.log('error when connecting to db:', err);
+        setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+      }                                     // to avoid a hot loop, and to allow our node script to
+    });                                     // process asynchronous requests in the meantime.
+                                          // If you're also serving http, display a 503 error.
+    global.db.on('error', function(err) {
+      console.log('db error', err);
+      if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+        handleDisconnect();                         // lost due to either server restart, or a
+      } else {                                      // connnection idle timeout (the wait_timeout
+        throw err;                                  // server variable configures this)
+      }
+    });
+}
+handleDisconnect();
 
 db.query(`
     SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
