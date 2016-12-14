@@ -45,7 +45,8 @@ class LikeButton extends Component {
 
 }
 
-export LikeButton;
-export default connect(state => ({
+var LikeButton = connect(state => ({
     user: state.User,
-}))(LikeButton)
+}))(LikeButton);
+
+export default LikeButton;
