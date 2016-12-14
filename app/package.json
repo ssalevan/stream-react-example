@@ -51,7 +51,7 @@
     "moment": "^2.13.0",
     "nock": "^8.0.0",
     "node-sass": "^3.8.0",
-    "react": "~15.1.0",
+    "react": "~15.4.1",
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-image-component": "^1.0.0",
