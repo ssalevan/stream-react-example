@@ -253,6 +253,7 @@ server.post('/uploads', function(req, res, next) {
             }, function(err, result) {
 
                 if (err || result.statusCode != 200) {
+                    log.error(err);
                     cb(err);
                 } else {
 
@@ -272,6 +273,7 @@ server.post('/uploads', function(req, res, next) {
             geo.geocode('mapbox.places', data.location, function (err, location) {
 
                 if (err) {
+                    log.error(err);
                     cb(err);
                 } else {
 
@@ -303,6 +305,7 @@ server.post('/uploads', function(req, res, next) {
             db.query('INSERT INTO uploads SET ?', data, function(err, result) {
 
                 if (err) {
+                    log.error(err);
                     cb(err);
                 } else {
 
@@ -355,6 +358,7 @@ server.post('/uploads', function(req, res, next) {
                     cb(null, result);
                 })
                 .catch(function(err) {
+                    log.error(err);
                     cb(err);
                 });
 
